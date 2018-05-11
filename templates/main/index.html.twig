@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home {{ controller_name }}!{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+
+        {% for team in teams %}
+            <div class="col-2">
+
+                <div class="card">
+                    <div class="front">
+                        <img src="{{ team.logo }}" alt="" width="100%">
+                    </div>
+                    <div class="back dataLink" data-link="{{ path('team', {'idTeam': team.idOWL}) }}">
+                        {{ team.name }}
+
+                        <a href="{{ path('team', {'idTeam': team.idOWL}) }}">
+                            {{ team.idOWL }}
+                        </a>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
