@@ -14,24 +14,51 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
+
 <nav>
-    <div class="container nav">
-    <ul>
-        <li class="dataLink" data-link="{{ path('teams') }}"><i class="fas fa-home"></i></li>
-        <li class="dataLink" data-link="{{ path('teams') }}"><i class="fas fa-users"></i></li>
-        <li><i class="fas fa-user"></i></li>
-    </ul>
+    <div class=" nav">
+        <ul>
+            <li>
+                <i class="fas fa-plus-circle"></i>
+            </li>
+            <li class="dataLink" data-link="{{ path('teams') }}">
+                <i class="fas fa-home"></i>
+            </li>
+            <li class="dataLink" data-link="{{ path('teams') }}">
+                <i class="fas fa-users"></i>
+            </li>
+            <li>
+                <i class="fas fa-user"></i>
+            </li>
+            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <li>
+                    {{ app.user.money }}<i class="far fa-gem"></i>
+                </li>
+            {% endif %}
+        </ul>
     </div>
 </nav>
 
+<div class="myModal">
+    <div class="body">
+        <div class="header">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="content">
+        </div>
+    </div>
+</div>
 
 <div class="container main">
     {% block body %}{% endblock %}
 </div>
+
+
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+<script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
@@ -45,6 +72,61 @@
 <script src="https://cdn.rawgit.com/renatorib/janimate/master/dist/janimate.min.js"></script>
 {% block javascripts %}
     <script>
+
+        function openModal(classBody, text) {
+            if (text !== null) {
+                $('.myModal .content').html(text);
+            }
+            if (classBody !== null) {
+                $('.myModal .body').addClass(classBody);
+            }
+            $('.myModal').fadeIn(500);
+            $('.myModal .body').slideDown(1000);
+            setTimeout(function () {
+                closeModal(classBody, text)
+            }, 2000)
+        }
+
+        function closeModal(classBody, text) {
+            $('.myModal .body').slideUp(500);
+            $('.myModal').fadeOut(1000);
+            if (text !== null) {
+                setTimeout(function () {
+                    $('.myModal .content').html("");
+                }, 1000)
+            }
+            if (classBody !== null) {
+                setTimeout(function () {
+                    $('.myModal .body').delay(1000).removeClass(classBody);
+                }, 1000)
+            }
+        }
+
+        function ajaxAddToRoster(playerId, userId) {
+            var link = "/ajax/addRoster";
+            $.ajax({
+                type: 'POST',
+                data: {
+                    user: userId,
+                    player: playerId
+                },
+                url: link,
+                dataType: 'json',
+                timeout: 2000,
+                success: function (response) {
+
+                    openModal(response[0], response[1])
+
+                    console.log(response);
+
+
+                },
+                error: function () {
+
+                }
+            })
+        }
+
         $(document).ready(function () {
             $('.card')
                 .mouseenter(function () {
@@ -59,6 +141,21 @@
 
                 window.location.href = $(this).data("link");
             })
+            $(".addToRoster").click(function () {
+                var playerId = $(this).data("player");
+                var userId = $(this).data("user");
+                ajaxAddToRoster(playerId, userId);
+
+            })
+
+
+            $('.testModal').click(function () {
+                openModal()
+
+            });
+            $('.myModal').click(function () {
+                closeModal()
+            });
 
 
         });

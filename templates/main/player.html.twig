@@ -7,24 +7,66 @@
     </style>
 {% endblock %}
 {% block body %}
-
     <div class="row">
-        {% for game in player.games %}
-            <div class="col-3">
-                <div class="card">
-                    <div class="front">
-                        {{ game.idOWL }}
-                        {{ game.matches.teamA }}
-                    </div>
-                    <div class="back">
-                        {{ game.name }}
-                    </div>
+        <div class="col-3 ">
+            <div class="kards">
 
-                </div>
+                <img src="{{ player.headshot }}" alt="" class="img-fluid">
+            </div>
+        </div>
+        <div class="col-6 ">
+            <div class="kards">
+
+                <h3>{{ player.name }}</h3>
+                <p>{{ player.firstName }} {{ player.lastName }}</p>
+                <p>{{ player.role }} </p>
+                <p>{{ player.playerNumber }} </p>
+                <p>{{ player.stats.prize }} <i class="far fa-gem"></i></p>
+                <p>{{ player.stats.bonus }} <i class="far fa-gem"></i></p>
+                <p>{{ player.stats.gain }} <i class="far fa-gem"></i></p>
+                <p>{{ player.stats.ratio }} </p>
+                <p>{{ dump(player.stats) }} </p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="kards">
+                {% for stats in statsPlayer %}
+                    {{ stats.stage.name }} |
+                    {{ stats.stats.prize }} |
+                    {{ stats.stats.bonus }} |
+                    {{ stats.stats.gain }}
+                    <br />
+                {% endfor %}
 
 
             </div>
-        {% endfor %}
+        </div>
     </div>
+
+    {#  <div class="row">
+          {% for game in gamePlayeds %}
+              <div class="col-3">
+                  <div class="card">
+                      <div class="front">
+                          {{ game.game.idOWL }}
+
+                          {% if game.team == "A" %}
+                              {{ game.game.matches.teamB }}
+                              {{ game.game.scoreTeamA }} - {{ game.game.scoreTeamB }}
+                          {% else %}
+                              {{ game.game.matches.teamA }}
+                              {{ game.game.scoreTeamB }} - {{ game.game.scoreTeamA }}
+                          {% endif %}
+                      </div>
+                      <div class="back">
+                          {{ game.game.name }}
+                      </div>
+
+                  </div>
+
+
+              </div>
+          {% endfor %}
+      </div>#}
 
 {% endblock %}

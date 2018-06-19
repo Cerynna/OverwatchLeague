@@ -98,6 +98,11 @@ class Team
      */
     private $matches;
 
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $stats;
+
     public function __construct()
     {
         $this->players = new ArrayCollection();
@@ -343,4 +348,18 @@ class Team
 
         return $this;
     }
+
+    public function getStats(): ?array
+    {
+        return $this->stats;
+    }
+
+    public function setStats(?array $stats): self
+    {
+        $this->stats = $stats;
+
+        return $this;
+    }
+
+
 }

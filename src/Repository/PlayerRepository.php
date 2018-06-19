@@ -19,6 +19,20 @@ class PlayerRepository extends ServiceEntityRepository
         parent::__construct($registry, Player::class);
     }
 
+    public function allOrder($order, $field, $max = null)
+    {
+        $query = $this->createQueryBuilder('p')
+            ->orderBy('p.' . $field, $order);
+        if (!is_null($max)) {
+
+            $query->setMaxResults($max);
+        }
+
+
+        return $query->getQuery()->getResult();
+    }
+
+
 //    /**
 //     * @return Player[] Returns an array of Player objects
 //     */

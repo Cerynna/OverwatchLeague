@@ -14,11 +14,17 @@
                         <img src="{{ team.logo }}" alt="" width="100%">
                     </div>
                     <div class="back dataLink" data-link="{{ path('team', {'idTeam': team.idOWL}) }}">
-                        {{ team.name }}
+                       <h3> {{ team.name }}</h3>
+<p>
 
-                        <a href="{{ path('team', {'idTeam': team.idOWL}) }}">
-                            {{ team.idOWL }}
-                        </a>
+</p>
+
+                        Win : {{ team.stats["teamWin"] }}<br />
+                        Tie : {{ team.stats["teamTie"] }}<br />
+                        Lose  : {{ team.stats["teamLose"] }}<br />
+                        {#LoseStrick  : {{ team.stats["teamLoseStrick"] }}<br />
+                        WinStrick  : {{ team.stats["teamWinStrick"] }}<br />
+                        teamTotal  : {{ team.stats["teamTotal"] }}<br />#}
 
                     </div>
                 </div>

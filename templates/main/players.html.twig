@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home {{ controller_name }}!{% endblock %}
+{% block stylesheets %}
+    <style>
+
+    </style>
+{% endblock %}
+{% block body %}
+
+    {% for player in players %}
+        <div class="row">
+            <div class="col-2">
+                <div class="card">
+
+                    <img src="{{ player.team.logo }}" alt="" class="img-fluid">
+                    <img src="{{ player.headShot }}" alt="" class="img-fluid"
+                         style="position: absolute; margin-top: 25px;">
+                    <p style="z-index: 100;
+                            text-align: center;
+                            font-size: 1.3em;
+                            background: {{ "#"~ player.team.secondaryColor }};
+                            color:{{ "#"~ player.team.primaryColor }};">{{ player.name }}</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <ul class="listHero">
+
+                        {% for hero in player.heroes %}
+                            <li>
+                        <span class="square">
+                            <i class="ohi-{{ hero }}"></i>
+                        </span>
+                                {{ hero }}
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+
+{% endblock %}

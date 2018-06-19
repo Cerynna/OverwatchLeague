@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home {{ controller_name }}!{% endblock %}
+{% block stylesheets %}
+    <style>
+
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <h3>Mon Roster pour le {{ roster.stage.name }}</h3>
+            </div>
+        </div>
+
+        {% set totalPrize = 0 %}
+        {% set totalGain = 0 %}
+        {% for player in roster.player %}
+            {% set totalPrize = totalPrize + player.prize %}
+            {% set totalGain = totalGain + player.gain %}
+            <div class="col">
+                <div class="card">
+                    {{ player.name }}
+                    {{ player.prize }}
+                    {{ player.gain }}
+                    {{ player.bonus }}
+                </div>
+
+            </div>
+        {% endfor %}
+        <div class="col-12">
+            <div class="card">
+
+                {{ totalPrize }}<br/>
+                {{ totalGain }}
+
+            </div>
+        </div>
+        {% if roster.stage.id != currentStage.id %}
+
+            <div class="col-12">
+                <div class="card">
+
+                    Valider mon roster
+
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

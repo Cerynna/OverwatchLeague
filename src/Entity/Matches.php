@@ -48,6 +48,21 @@ class Matches
      */
     private $endDate;
 
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $scores;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Stages", inversedBy="matches", cascade={"persist"})
+     */
+    private $stages;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $name;
+
     public function __construct()
     {
         $this->games = new ArrayCollection();
@@ -145,6 +160,48 @@ class Matches
     public function setEndDate(?\DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+
+        return "Ca bug";
+    }
+
+    public function getScores(): ?array
+    {
+        return $this->scores;
+    }
+
+    public function setScores(?array $scores): self
+    {
+        $this->scores = $scores;
+
+        return $this;
+    }
+
+    public function getStages(): ?Stages
+    {
+        return $this->stages;
+    }
+
+    public function setStages(?Stages $stages): self
+    {
+        $this->stages = $stages;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

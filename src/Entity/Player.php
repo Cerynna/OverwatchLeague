@@ -11,6 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Player
 {
+
+
+    const   PRIZE = 150;
+    const   BONUS_PRIZE = [
+        "map" => 25
+    ];
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -108,10 +114,54 @@ class Player
      */
     private $nationality;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\GamePlayed", mappedBy="player")
+     */
+    private $gamePlayeds;
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $stats;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $prize;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $bonus;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $gain;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ArchiveStats", mappedBy="player")
+     */
+    private $archiveStats;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $ratio;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Roster", mappedBy="player")
+     */
+    private $rosters;
+
+
+
 
     public function __construct()
     {
-
+        $this->gamePlayeds = new ArrayCollection();
+        $this->archiveStats = new ArrayCollection();
+        $this->rosters = new ArrayCollection();
     }
 
     public function getId()
@@ -340,5 +390,154 @@ class Player
         return $this;
     }
 
+    /**
+     * @return Collection|GamePlayed[]
+     */
+    public function getGamePlayeds(): Collection
+    {
+        return $this->gamePlayeds;
+    }
+
+    public function addGamePlayed(GamePlayed $gamePlayed): self
+    {
+        if (!$this->gamePlayeds->contains($gamePlayed)) {
+            $this->gamePlayeds[] = $gamePlayed;
+            $gamePlayed->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGamePlayed(GamePlayed $gamePlayed): self
+    {
+        if ($this->gamePlayeds->contains($gamePlayed)) {
+            $this->gamePlayeds->removeElement($gamePlayed);
+            // set the owning side to null (unless already changed)
+            if ($gamePlayed->getPlayer() === $this) {
+                $gamePlayed->setPlayer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getStats(): ?array
+    {
+        return $this->stats;
+    }
+
+    public function setStats(?array $stats): self
+    {
+        $this->stats = $stats;
+
+        return $this;
+    }
+
+    public function getPrize(): ?int
+    {
+        return $this->prize;
+    }
+
+    public function setPrize(?int $prize): self
+    {
+        $this->prize = $prize;
+
+        return $this;
+    }
+
+    public function getBonus(): ?int
+    {
+        return $this->bonus;
+    }
+
+    public function setBonu(?int $bonus): self
+    {
+        $this->bonus = $bonus;
+
+        return $this;
+    }
+
+    public function getGain(): ?int
+    {
+        return $this->gain;
+    }
+
+    public function setGain(?int $gain): self
+    {
+        $this->gain = $gain;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ArchiveStats[]
+     */
+    public function getArchiveStats(): Collection
+    {
+        return $this->archiveStats;
+    }
+
+    public function addArchiveStat(ArchiveStats $archiveStat): self
+    {
+        if (!$this->archiveStats->contains($archiveStat)) {
+            $this->archiveStats[] = $archiveStat;
+            $archiveStat->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeArchiveStat(ArchiveStats $archiveStat): self
+    {
+        if ($this->archiveStats->contains($archiveStat)) {
+            $this->archiveStats->removeElement($archiveStat);
+            // set the owning side to null (unless already changed)
+            if ($archiveStat->getPlayer() === $this) {
+                $archiveStat->setPlayer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getRatio(): ?int
+    {
+        return $this->ratio;
+    }
+
+    public function setRatio(?int $ratio): self
+    {
+        $this->ratio = $ratio;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Roster[]
+     */
+    public function getRosters(): Collection
+    {
+        return $this->rosters;
+    }
+
+    public function addRoster(Roster $roster): self
+    {
+        if (!$this->rosters->contains($roster)) {
+            $this->rosters[] = $roster;
+            $roster->addPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRoster(Roster $roster): self
+    {
+        if ($this->rosters->contains($roster)) {
+            $this->rosters->removeElement($roster);
+            $roster->removePlayer($this);
+        }
+
+        return $this;
+    }
 
 }

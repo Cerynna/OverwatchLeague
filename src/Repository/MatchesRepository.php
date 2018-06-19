@@ -19,6 +19,34 @@ class MatchesRepository extends ServiceEntityRepository
         parent::__construct($registry, Matches::class);
     }
 
+
+    public function getByWeek($week = null)
+    {
+
+        $query = $this->createQueryBuilder('m');
+        $query->orderBy('m.startDate', 'ASC');
+        /*$query->where('m.startDate BETWEEN :start AND :end')
+            ->setParameter("start", new \DateTime('now - 10 day'))
+            ->setParameter("end", new \DateTime('now'));*/
+
+        $matches = $query->getQuery()->getResult();
+        $result = [];
+        /** @var Matches $matche */
+        foreach ($matches as $match) {
+            $weekMatch = $match->getStartDate()->format("W");
+            $dateMatch = $match->getStartDate()->format("d-m-y-h-i-s");
+            $result[$weekMatch][$dateMatch] = $match;
+        }
+
+        if (!is_null($week)) {
+            if(isset($result[$week]) and !empty($result[$week])){
+                return [0 => $result[$week]];
+            }
+        }
+        return $result;
+
+    }
+
 //    /**
 //     * @return Matches[] Returns an array of Matches objects
 //     */

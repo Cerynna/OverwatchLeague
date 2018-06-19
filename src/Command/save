@@ -1,0 +1,203 @@
+/*        if ($input->getOption('matchs')) {
+
+            foreach ($stages as $stage) {
+                foreach ($stage->matches as $matchAPI) {
+                    $verif = $this->em->getRepository(Matches::class)->findOneBy(['idOWL' => $matchAPI->id]);
+                    $teamA = $matchAPI->competitors[0];
+                    $teamB = $matchAPI->competitors[1];
+                    /** @var Team $teamADB */
+                    $teamADB = $this->em->getRepository(Team::class)->findOneBy(['idOWL' => $teamA->id]);
+                    /** @var Team $teamBDB */
+                    $teamBDB = $this->em->getRepository(Team::class)->findOneBy(['idOWL' => $teamB->id]);
+
+
+                    $type = "<info>CREATE</info>";
+                    $match = new Matches();
+
+                    if (!is_null($verif)) {
+                        $match = $verif;
+                        $type = "<comment>UPDATE</comment>";
+                    }
+                    $match->setStartDate(new \DateTime($matchAPI->startDate));
+                    $match->setEndDate(new \DateTime($matchAPI->endDate));
+
+                    $matchAPI = $this->fromAPI->CallAPI('GET', 'https://api.overwatchleague.com/matches/' . $matchAPI->id);
+
+                    foreach ($matchAPI->games as $gameAPI) {
+                        $game = new Game();
+                        $verif = $this->em->getRepository(Game::class)->findOneBy(['idOWL' => $gameAPI->id]);
+                        if (!is_null($verif)) {
+                            $game = $verif;
+                        }
+                        if (isset($gameAPI->attributes->mapScore) and !is_null($gameAPI->attributes->mapScore)) {
+                            $game->setScoreTeamA($gameAPI->attributes->mapScore->team1);
+                            $game->setScoreTeamB($gameAPI->attributes->mapScore->team2);
+                        }
+                        foreach ($gameAPI->players as $playerAPI) {
+                            /** @var Player $player */
+                            $player = $this->em->getRepository(Player::class)->findOneBy(['idOWL' => $playerAPI->player->id]);
+                            if (!is_null($player)) {
+                                $gamePlayed = new GamePlayed();
+                                $verif = $this->em->getRepository(GamePlayed::class)->findOneBy([
+                                    'player' => $player,
+                                    'game' => $game,
+                                ]);
+                                if (!is_null($verif)) {
+                                    $gamePlayed = $verif;
+                                }
+                                $gamePlayed->setPlayer($player);
+                                $gamePlayed->setGame($game);
+                                $gamePlayed->setTeam($this->toolsPlayers->findTeam($player, $teamADB, $teamBDB));
+                                $game->addPlayer($player);
+                                $this->em->persist($gamePlayed);
+                                $player->addGamePlayed($gamePlayed);
+                                $this->em->flush();
+                            }
+                        }
+                        $game->setMatches($match);
+                        $this->em->persist($game);
+                    }
+
+
+                    $match->setScores([
+                        "A" => $matchAPI->scores[0]->value,
+                        "B" => $matchAPI->scores[1]->value
+                    ]);
+
+                    $output->writeln($matchAPI->id . "  -   " . $matchAPI->scores[0]->value . " - " . $matchAPI->scores[1]->value . "   " . $type);
+                    $this->em->persist($match);
+                    $this->em->flush();
+                }
+            }
+
+        } elseif ($input->getOption('stages')) {
+            foreach ($stages as $stage) {
+                $weeks = $stage->weeks;
+                foreach ($weeks as $week) {
+                    $stageDB = new Stages();
+                    $stageDB->setName($stage->name . " - " . $week->name);
+                    $matches = $week->matches;
+                    $arrDate = [];
+                    foreach ($matches as $matchAPI) {
+                        /** @var Matches $verif */
+                        $verif = $this->em->getRepository(Matches::class)->findOneBy(['idOWL' => $matchAPI->id]);
+                        if (!is_null($verif)) {
+                            $stageDB->addMatch($verif);
+                            if (!is_null($verif->getStartDate()) and !empty($verif->getStartDate())) {
+                                $arrDate[] = $verif->getStartDate();
+                            }
+                        }
+                    }
+                    if (!is_null($arrDate) and !empty($arrDate)) {
+                        $stageDB->setStartDate(array_pop($arrDate));
+                        $stageDB->setEndDate(array_shift($arrDate));
+                        $stageDB->setWeek($stageDB->getStartDate()->format("W"));
+                    }
+
+
+                    $io->write($this->addSpace($stageDB->getName(), 20, "center", "|"));
+                    if (!is_null($stageDB->getStartDate())) {
+                        $io->write($this->addSpace($stageDB->getStartDate()->format("d-m-y"), 10, "center", "|"));
+                    }
+
+                    if (!is_null($stageDB->getEndDate())) {
+                        $io->write($this->addSpace($stageDB->getEndDate()->format("d-m-y"), 10, "center", "|"));
+                    }
+
+
+                    $io->write($this->addSpace($stageDB->getWeek(), 5, "center", "|"));
+                    $io->write("\n");
+                    /*dump($stageDB);*/
+                    $this->em->persist($stageDB);
+                    $this->em->flush();
+                }
+
+
+            }
+
+        } else {
+            $i = 1;
+            foreach ($stages as $stage) {
+                foreach ($stage->matches as $matchAPI) {
+                    $verif = $this->em->getRepository(Matches::class)->findOneBy(['idOWL' => $matchAPI->id]);
+                    $type = "<info>CREATE</info>";
+                    $match = new Matches();
+                    if (!is_null($verif)) {
+                        $match = $verif;
+                        $type = "<comment>UPDATE</comment>";
+                    }
+                    $match->setIdOWL($matchAPI->id);
+                    $date = new \DateTime();
+                    $match->setStartDate(new \DateTime($matchAPI->startDate));
+                    $match->setEndDate(new \DateTime($matchAPI->endDate));
+                    $matchAPI = $this->fromAPI->CallAPI('GET', 'https://api.overwatchleague.com/matches/' . $matchAPI->id);
+                    if (isset($matchAPI->competitors) and !is_null($matchAPI->competitors)) {
+                        $teamA = $matchAPI->competitors[0];
+                        $teamB = $matchAPI->competitors[1];
+                        if (isset($teamA->id) and isset($teamB->id) and !is_null($teamA->id) AND !is_null($teamB->id)) {
+                            /** @var Team $teamADB */
+                            $teamADB = $this->em->getRepository(Team::class)->findOneBy(['idOWL' => $teamA->id]);
+                            /** @var Team $teamBDB */
+                            $teamBDB = $this->em->getRepository(Team::class)->findOneBy(['idOWL' => $teamB->id]);
+                            $match->setTeamA($teamADB);
+                            $match->setTeamB($teamBDB);
+                            $match->setScores([
+                                'A' => $matchAPI->scores[0]->value,
+                                'B' => $matchAPI->scores[1]->value,
+                            ]);
+                            $output->writeln($i . "   -   " . $matchAPI->id . "  -   " . $matchAPI->scores[0]->value . " - " . $matchAPI->scores[1]->value . "   " . $type);
+                            if (!empty($matchAPI)) {
+                                foreach ($matchAPI->games as $gameAPI) {
+                                    $verif = $this->em->getRepository(Game::class)->findOneBy(['idOWL' => $gameAPI->id]);
+
+                                    $game = new Game();
+
+                                    if (!is_null($verif)) {
+                                        $game = $verif;
+                                    }
+
+
+                                    $game->setIdOWL($gameAPI->id);
+                                    if (isset($gameAPI->attributes->map) and !is_null($gameAPI->attributes->map)) {
+                                        $game->setName($gameAPI->attributes->map);
+                                    }
+                                    if (isset($gameAPI->attributes->mapScore) and !is_null($gameAPI->attributes->mapScore)) {
+                                        $game->setScoreTeamA($gameAPI->attributes->mapScore->team1);
+                                        $game->setScoreTeamB($gameAPI->attributes->mapScore->team2);
+                                    }
+                                    if (isset($teamA->abbreviatedName) and !is_null($teamA->abbreviatedName) AND isset($teamB->abbreviatedName) and !is_null($teamB->abbreviatedName)) {
+                                        $output->writeln($gameAPI->id . "  -   " . $teamA->abbreviatedName . " " . $game->getScoreTeamA() . " - " . $game->getScoreTeamB() . " " . $teamB->abbreviatedName . "  |   " . $gameAPI->attributes->map);
+                                    }
+                                    $i++;
+                                    foreach ($gameAPI->players as $playerAPI) {
+                                        /** @var Player $player */
+                                        $player = $this->em->getRepository(Player::class)->findOneBy(['idOWL' => $playerAPI->player->id]);
+                                        if (!is_null($player)) {
+                                            $gamePlayed = new GamePlayed();
+                                            $verif = $this->em->getRepository(GamePlayed::class)->findOneBy([
+                                                'player' => $player,
+                                                'game' => $game,
+                                            ]);
+                                            if (!is_null($verif)) {
+                                                $gamePlayed = $verif;
+                                            }
+                                            $gamePlayed->setPlayer($player);
+                                            $gamePlayed->setGame($game);
+                                            $gamePlayed->setTeam($this->toolsPlayers->findTeam($player, $teamADB, $teamBDB));
+                                            $game->addPlayer($player);
+                                            $this->em->persist($gamePlayed);
+                                            $player->addGamePlayed($gamePlayed);
+                                            $this->em->flush();
+                                        }
+                                    }
+                                    $match->addGame($game);
+                                    $this->em->persist($game);
+                                }
+                            }
+                        }
+                    }
+                    $this->em->persist($match);
+                    $this->em->flush();
+                }
+            }
+        }*/

@@ -39,7 +39,7 @@ class Game
     private $state;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Matches", inversedBy="games")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Matches", inversedBy="games",cascade={"persist"})
      */
     private $matches;
 
@@ -57,6 +57,11 @@ class Game
      * @ORM\Column(type="integer", nullable=true)
      */
     private $scoreTeamB;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\GamePlayed", mappedBy="game")
+     */
+    private $gamePlayeds;
 
 
 
@@ -165,6 +170,37 @@ class Game
     public function setScoreTeamB(?int $scoreTeamB): self
     {
         $this->scoreTeamB = $scoreTeamB;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GamePlayed[]
+     */
+    public function getGamePlayeds(): Collection
+    {
+        return $this->gamePlayeds;
+    }
+
+    public function addGamePlayed(GamePlayed $gamePlayed): self
+    {
+        if (!$this->gamePlayeds->contains($gamePlayed)) {
+            $this->gamePlayeds[] = $gamePlayed;
+            $gamePlayed->setGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGamePlayed(GamePlayed $gamePlayed): self
+    {
+        if ($this->gamePlayeds->contains($gamePlayed)) {
+            $this->gamePlayeds->removeElement($gamePlayed);
+            // set the owning side to null (unless already changed)
+            if ($gamePlayed->getGame() === $this) {
+                $gamePlayed->setGame(null);
+            }
+        }
 
         return $this;
     }

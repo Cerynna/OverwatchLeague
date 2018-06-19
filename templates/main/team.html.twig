@@ -19,27 +19,40 @@
                     <img src="{{ team.logo }}" alt="" width="100%">
                 </div>
                 <div class="back">
-                   Retour
+                    Retour
                 </div>
             </div>
 
         </div>
 
-        {%  for player in team.players %}
+        {% for player in team.players %}
 
             <div class="col-6 col-lg-3">
-                <div class="pureCss dataLink cursor"  data-link="{{ path('player', {'idPlayer': player.idOWL}) }}">
+                <div class="pureCss cursor" data-link="{{ path('player', {'idPlayer': player.idOWL}) }}">
                     <div class="front">
                         <img src="{{ player.headshot }}" alt="" width="100%">
                     </div>
                     <div class="back">
-                       <h3>{{ player.name }}</h3>
+                        <h3>{{ player.name }}</h3>
+
+                        {% if player.stats is not empty %}
+                            Win {{ player.stats["win"] }}<br/>
+                            Tie {{ player.stats["tie"] }}<br/>
+                            Lose {{ player.stats["lose"] }}<br/>
+                        {% endif %}
+
+                        {{ player.prize }} <i class="far fa-gem"></i><br/>
+                        {{ player.gain }} <i class="far fa-gem"></i><br/>
+
+                        <div class="addToRoster" data-user="{{ app.user.id }}" data-player="{{ player.idOWL }}">
+                            Ajouter a mon Roster
+                        </div>
+
                     </div>
                 </div>
             </div>
 
         {% endfor %}
-
 
 
         <div class="col-6">

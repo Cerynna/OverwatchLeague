@@ -1,4 +1,5 @@
 @import url(partials/animate.css);
+@import url(partials/ohi_font.css);
 @import url("https://fonts.googleapis.com/css?family=Anton");
 body {
   background: url("/img/background.jpg");
@@ -9,18 +10,36 @@ nav {
   width: 100%;
   position: fixed;
   top: 0;
-  background: pink;
-  z-index: 2000; }
+  z-index: 2000;
+  height: 50px; }
   nav .nav {
-    padding: 0; }
+    margin-top: 5px;
+    margin-left: 5px;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    width: 50px;
+    height: 45px;
+    -webkit-transition: width 2s;
+    /* Safari */
+    transition: width 2s;
+    overflow: hidden; }
+  nav:hover .nav {
+    width: 500px;
+    padding: 0;
+    display: block; }
   nav ul {
-    background: green;
-    margin: auto auto;
     padding: 0; }
     nav ul li {
       display: inline-block;
       font-size: 1.7em;
-      padding: 0 10px; }
+      padding: 0 10px;
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0);
+      cursor: pointer; }
+      nav ul li:hover {
+        border-radius: 5px;
+        border: 2px solid white; }
 
 .main {
   background: rgba(0, 0, 0, 0.45);
@@ -32,6 +51,9 @@ nav {
   max-height: 160px;
   margin-bottom: 15px;
   border-radius: 5px; }
+  .card h3 {
+    font-size: 1.4em;
+    text-align: center; }
   .card .front, .card .back {
     padding: 10px;
     height: 100%; }
@@ -40,7 +62,6 @@ nav {
     display: none;
     min-height: 160px;
     max-height: 160px;
-    background: red;
     border: 2px solid white;
     border-radius: 5px;
     z-index: 1000;
@@ -88,5 +109,57 @@ nav {
 
 .cursor {
   cursor: pointer; }
+
+.listHero {
+  padding: 0;
+  list-style: none; }
+  .listHero li {
+    margin: 20px; }
+  .listHero .square {
+    overflow: hidden;
+    background: black;
+    color: white;
+    margin: 5px;
+    padding: 10px;
+    font-size: 50px;
+    border-radius: 5px;
+    text-align: center; }
+    .listHero .square i {
+      margin: auto; }
+
+.addToRoster {
+  padding: 5px 10px;
+  background: black;
+  color: #FFF;
+  border-radius: 5px;
+  border: 2px solid black;
+  text-align: center;
+  margin: 10px 5px; }
+  .addToRoster:hover {
+    border: 2px solid black;
+    background: white;
+    color: black; }
+
+.myModal {
+  position: fixed;
+  z-index: 2000;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.4);
+  height: 100vh;
+  margin-top: -10%;
+  display: none; }
+  .myModal .body {
+    width: 400px;
+    background: white;
+    border-radius: 5px;
+    margin: 20% auto;
+    padding: 10px 20px;
+    display: none; }
+    .myModal .body.error {
+      background: #ae0008; }
+    .myModal .body .header {
+      text-align: right; }
+      .myModal .body .header:hover {
+        color: orange; }
 
 /*# sourceMappingURL=main.css.map */
